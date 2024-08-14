@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="px-4 py-5 my-5">
+        <div class="col-lg-6 mx-auto">
+          <div class="content-section">
+            <form method="POST">
+              {% csrf_token %}
+              <div class="form-group">
+                <h1 class="display-6 fw-bold text-center" style="color:#ff5722;">Booking</h1>
+                {{ form.subject.label_tag }}
+                {{ form.subject }}
+                <div class="mt-4 mb-4">
+                {{ form.frequency.label_tag }}
+                {{ form.frequency }}
+                </div>
+                {{ form.student_msg.label_tag }}
+                {{ form.student_msg }}
+                <button class="btn btn-warning mt-4 mb-3" type="submit">book</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

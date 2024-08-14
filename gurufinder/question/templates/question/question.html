@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<div class="container pb-5">
+<div class="section">
+	<h4 class="display-6" style="color:#ff5722;">{{ subject.name }}</h4>
+	<div class="divider"></div>
+</div>
+
+<div class="row g-0">
+
+<div class="col-md-3">
+      <ul class="collection with-header">
+                <li class="collection-header"><h4 class="display-6">Classroom</h4></li>
+                <a href="{% url 'classroom:course' slug=subject.slug  subject_id=subject.id %}" class="collection-item">Home</a>
+                <a href="{% url 'classroom:modules' slug=subject.slug  subject_id=subject.id %}" class="collection-item">Module</a>
+                <a href="{% url 'classroom:submissions' slug=subject.slug  subject_id=subject.id %}" class="collection-item">Submissions</a>
+                <a href="{% url 'classroom:questions' slug=subject.slug  subject_id=subject.id %}" class="collection-item active">Questions</a>
+              <a href="{% url 'classroom:lesson_list'  slug=subject.slug subject_id=subject.id %}" class="collection-item">Extra Content</a>
+
+                  {% if user.is_tutor %}
+                <li class="collection-header"><h4 class="display-6">Teacher</h4></li>
+                <a href="{% url 'classroom:student-submissions' slug=subject.slug  subject_id=subject.id %}" class="collection-item">Student Submissions</a>
+                    {% endif %}
+
+              </ul>
+</div>
+
+<div class="col-md-9 gx-5">
+
+
+  <div class="section">
+    <h7 class="display-6">{{ question.title|capfirst }}</h7>
+    <div class="divider mb-3 mt-4"></div>
+
+    <div>
+      {{ question.body | safe }}
+    </div>
+
+    <div>
+      <div class="divider"></div>
+      <h4><b>Asked by</b></h4>
+    </div>
+
+    <div class="col-md-12">
+      <div class="card-panel grey lighten-5 z-depth-1">
+
+      <div class="row">
+      <div class="col-md-2">
+      {% if question.user.image %}
+        <img src="{{ question.user.image.url }}" class="circle responsive-img">
+      {% else %}
+        <img src="#" class="circle responsive-img">
+      {% endif %}
+      </div>
+
+      <div class="col-md-10">
+        <p class="black-text"><b>{{ question.user.get_full_name|title }}</b> @{{ question.user.email }}</p>
+        <p class="black-text"><b>Asked: </b>{{question.created_date | naturaltime }}</p>
+      </div>
+      </div>
+
+      </div>
+    </div>
+
+    <div class="col-md-12">
+      <h5><b>Answers: {{ answers.count }}</b></h5>
+      <div class="divider mt-4"></div>
+    </div>
+    {% csrf_token %}
+    <input type="hidden" name="url_path" value="{{ request.get_full_path }}">
+
+
+
+    <div class="col-md-12">
+
+      {% for answer in answers %}
+      <div class="col-md-12">
+      <div class="card-panel grey lighten-5 z-depth-2">
+
+      {% if answer.is_accepted_answer == True %}
+      <div class="col-md-12 right-align">
+        <i class="material-icons medium green-text">done</i>
+      </div>
+      {% endif %}
+
+      <div class="col-md-12">
+        {{ answer.body | safe }}
+      </div>
+
+      <div class="row pt-5">
+      <div class="col-md-2">
+      {% if answer.user.image %}
+        <img src="{{ answer.user.image.url }}" class="circle responsive-img">
+      {% else %}
+        <img src="#" class="circle responsive-img">
+      {% endif %}
+      </div>
+
+      <div class="col-md-10">
+        <p class="black-text"><b>{{ answer.user.get_full_name|title }}</b> @{{ answer.user.email }}</p>
+        <p class="black-text"><b>Answered: </b>{{answer.created_date | naturaltime }}</p>
+      </div>
+
+      <div class="col-md-12 pt-5">
+        <a href="" class="vote" vote-type="U" answer-id="{{ answer.id }}"><i class="material-icons">thumb_up</i>Up vote</a>
+        <a href="" class="vote" vote-type="D" answer-id="{{ answer.id }}"><i class="material-icons">thumb_down</i>Down vote</a> 
+
+        {% if user == question.user %}
+          <a href="{% url 'classroom:mark-as-answer' slug=subject.slug subject_id=subject.id question_id=question.id answer_id=answer.id %}"><i class="material-icons">done</i>Mark as answer</a>
+        {% endif %}
+
+        <span class="card-title"><b>  Votes</b></span>
+        <span id="answerVotes{{ answer.id }}" class="card-title"><b>{{ answer.votes }}</b></span>
+
+      </div>
+
+      </div>
+
+      </div>
+    </div>
+    {% endfor %}   
+
+    </div>
+
+
+    <div class="col-md-12">
+      <h5><b>Your answer</b></h5>
+      <div class="divider"></div>
+
+      <div class="pt-2">
+        <form method="post" action="" role="form" class="col-md-12">
+          {% csrf_token %}
+          <div class="input-field col-md-12">
+            {{ form.body }}
+          </div>
+          <div class="input-field col-md-12">
+            <button type="submit" value="login" class="btn waves-effect waves-light">
+              Submit
+            </button>
+          </div>
+          
+        </form>
+          
+        
+      </div>
+
+    </div>
+
+
+
+
+
+    <div class="col-md-12 m12 center-align">
+      {% if questions.has_previous %}
+        <a href="?page={{ questions.previous_page_number }}" class="btn"><i class="material-icons">arrow_back</i>Back</a>
+      {% endif %}
+
+      {% if questions.has_next %}
+        <a href="?page={{ questions.next_page_number }}" class="btn"><i class="material-icons">add</i>Load more</a>
+      {% endif %}  
+
+    </div>
+  
+
+
+  </div>
+  
+</div>
+
+
+</div>
+</div>
+
+{% endblock %}

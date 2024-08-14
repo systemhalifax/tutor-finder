@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+    <div class="pt-5">
+      <div class="px-4 py-5 my-5 text-center">
+        <h1 class="display-6 fw-bold" style="color:#ff5722;">Do you really want to Cancel the Session?</h1>
+          <form method="post">
+              {% csrf_token %}
+            <div class="col-lg-6 mx-auto">
+              <div class="d-grid gap-2 d-sm-flex justify-content-sm-center my-5">
+                <input type="submit" value="Confirm" role="button" class="btn btn-danger btn-lg px-4 me-sm-3">
+                <a href="{% url 'accounts:booked_sessions' %}" type="button" class="btn btn-warning btn-lg px-4">Cancel</a>
+              </div>
+            </div>
+          </form>
+      </div>
+{% endblock %}

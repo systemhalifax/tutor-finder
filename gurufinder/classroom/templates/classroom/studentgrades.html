@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container pb-5">
+    <div class="section">
+        <h4 class="display-6" style="color:#ff5722;">{{ subject.name }}</h4>
+        <div class="divider"></div>
+    </div>
+
+    <div class="row g-0">
+
+    <div class="col-md-3">
+          <ul class="collection with-header">
+            <li class="collection-header"><h4 class="display-6">Classroom</h4></li>
+                <a href="{% url 'classroom:course' slug=subject.slug  subject_id=subject.id %}" class="collection-item">Home</a>
+                <a href="{% url 'classroom:modules' slug=subject.slug  subject_id=subject.id %}" class="collection-item">Module</a>
+                <a href="{% url 'classroom:submissions' slug=subject.slug  subject_id=subject.id %}" class="collection-item">Submissions</a>
+                <a href="{% url 'classroom:questions' slug=subject.slug  subject_id=subject.id %}" class="collection-item">Questions</a>
+              <a href="{% url 'classroom:lesson_list'  slug=subject.slug subject_id=subject.id %}" class="collection-item">Extra Content</a>
+
+
+              <li class="collection-header"><h4 class="display-6">Teacher</h4></li>
+              <a href="{% url 'classroom:student-submissions' slug=subject.slug  subject_id=subject.id %}" class="collection-item active">Student Submissions</a>
+
+
+          </ul>
+    </div>
+
+    <div class="col-md-9 gx-5">
+
+      <div class="section">
+        <h4 class="display-6">Student submissions</h4>
+
+          <table>
+            <thead>
+              <tr>
+                  <th>Student</th>
+                  <th>Assignment</th>
+                  <th>Due</th>
+                  <th>Submitted</th>
+                  <th>Status</th>
+                  <th>Score</th>
+                  <th>Out of</th>
+                  <th>Graded by</th>
+                  <th>Grade</th>
+              </tr>
+            </thead>
+
+            <tbody>
+            {% for grade in grades %}
+              <tr>
+                <td>{{ grade.submission.user.get_full_name|title }}</td>
+                <td>{{ grade.submission.assignment.title }}</td>
+                <td>{{ grade.submission.assignment.due }}</td>
+                <td>{{ grade.submission.date }}</td>
+                <td><b>{{ grade.status }}</b></td>
+                <td>{{ grade.points }}</td>
+                <td>{{ grade.submission.assignment.points }}</td>
+                <td>{{ grade.graded_by.get_full_name|title }}</td>
+                <td><a href="{% url 'classroom:grade-submission' slug=subject.slug subject_id=subject.id grade_id=grade.id %}"><i class="material-icons">mode</i>Grade</a></td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+
+
+
+      </div>
+
+    </div>
+
+
+    </div>
+</div>
+<div class="pb-5"></div>
+<div class="pb-5"></div>
+
+
+{% endblock %}

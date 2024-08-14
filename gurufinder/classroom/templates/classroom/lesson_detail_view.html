@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container pb-5" xmlns="http://www.w3.org/1999/html">
+        <section class="text-center">
+            <h2 class="my-5 display-6" style="color:#ff5722;">{{ lessons.name}}</h2>
+            <div class="row d-flex justify-content-center mb-3">
+                <p class="blockquote-footer">Created on {{lessons.created_at}} by <cite title="Source Title">{{lessons.created_by}}</cite></p>
+            </div>
+            {% if lessons.video %}
+            <!-- video -->
+            <div class="row d-flex justify-content-center mb-3">
+              <div id="player-overlay">
+                  <video controls>
+                      <source src="{{lessons.video.url}}"  type="video/mp4">
+                  </video>
+              </div>
+            </div>
+            {% else %}
+            <h1><strong>Video Not Available</strong></h1>
+            {% endif %}
+            <!-- download cards -->
+            <div class="row d-flex justify-content-center mb-3 mt-3">
+              <!-- download presentations -->
+                <div class="col-md-4 mb-4 mt-4">
+                    <div class="card box-shadow-hover">
+                        <div class="card-body">
+                            <h5 class="card-title" style="color:#ff5722;">Download Presentations</h5>
+                            {% if lessons.ppt %}
+                            <p class="card-text" >Download presentations from the lecture</p>
+                            <a href="{{lessons.ppt.url}}" download>
+                                <button type="button" class="button-les"><span>Get Files</span></button>
+                            </a>
+                            {% else %}
+                            <p class="card-text" > No PPT available</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+              <!-- download notes -->
+                <div class="col-md-4 mb-4 mt-4">
+                    <div class="card box-shadow-hover">
+                        <div class="card-body">
+                            <h5 class="card-title" style="color:#ff5722;">Download Notes</h5>
+                            {% if lessons.Notes %}
+                            <p class="card-text">Download notes from the lecture</p>
+                            <a href="{{lessons.Notes.url}}" download>
+                                <button type="button" class="button-les"><span>Get Files</span></button>
+                            </a>
+                            {% else %}
+                            <p class="card-text">Notes not available</p>
+                            {%endif%}
+                        </div>
+                    </div>
+                </div>
+              <!-- download video -->
+                <div class="col-md-4 mb-4 mt-4">
+                    <div class="card box-shadow-hover">
+                        <div class="card-body">
+                            <h5 class="card-title" style="color:#ff5722;">Download Video</h5>
+                            {% if lessons.video %}
+                            <p class="card-text">Download Video from the lecture</p>
+                            <a href="{{lessons.video.url}}" download>
+                                <button type="button" class="button-les"><span>Get Files</span></button>
+                            </a>
+                            {% else %}
+                            <p class="card-text">Video not available</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- update and delete button -->
+            <div class="row d-flex justify-content-center mb-3 mt-3">
+                {% if completed != True and user.is_student %}
+                    <div class="col-lg-12 center-align pt-3">
+                        <a class="btn-large" href="{% url 'classroom:mark-lesson-as-done' classroom=lessons.Classroom.slug subject_id=lessons.subject.id lesson_id=lessons.id %}"><i class="material-icons">done</i> Mark as done</a>
+                    </div>
+                {% endif %}
+                {% if user.tutor_profile.is_validated == True or user.is_superuser %}
+                <div class="col-md-6 mb-3 text-center">
+                    <a href="{% url 'classroom:lesson_update' classroom=lessons.Classroom.slug subject=lessons.subject.slug slug=lessons.slug %}" class="btn btn-warning btn-lg mr-4 btn-block">Update Lesson</a>
+                </div>
+                <div class="col-md-6">
+                    <a href="{% url 'classroom:lesson_delete' classroom=lessons.Classroom.slug subject=lessons.subject.slug slug=lessons.slug %}" class="btn btn-danger btn-lg mr-4 btn-block"> Delete Lesson </a>
+                </div>
+                {% endif %}
+              </div>
+        </section>
+
+        <hr class="my-5">
+
+        <!-- Comments section -->
+        <section >
+            <h2 class="display-6" style="color:#ff5722;">Questions And Queries</h2>
+            <h4 class="display-6" >Post your comment or question below:</h4>
+            <br><br>
+            <div class="col-md-6">
+                <form method="post">
+                    <div class="form-group">
+                        {% csrf_token %}
+                        {{form|crispy}}
+                        <input type="submit" name="form" value="Add Comment" class="btn btn-primary btn-sm mt-4">
+                    </div>
+                 </form>
+            </div>
+            <div class="row">
+              {% for comment in lessons.comments.all %}
+              <div class="col-md-8 mt-2 mb-2">
+                  <div class="media border p-3">
+                      <img src="{{ comment.author.image.url }}" alt="{{ comment.author.first_name }}" class="mr-3 mt-3 rounded-circle" style="width:60px;">
+                      <div class="media-body">
+                          <h6>{{comment.author|title}} <small><i>Posted on {{comment.date_added}}</i></small></h6>
+                          <p>{{comment.body}}</p>
+                          {% for reply in comment.replies.all %}
+                          <div class="media p-3">
+                              <img src="{{ reply.author.image.url }}" alt="{{ reply.author.first_name }}" class="mr-3 mt-3 rounded-circle" style="width:45px;">
+                              <div class="media-body">
+                                  <h6>{{reply.author|title}} <small><i>Posted on {{reply.date_added}}</i></small></h6>
+                                  <p>{{reply.reply_body}}</p>
+                              </div>
+                          </div>
+                          {% endfor %}
+                          <!-- form to post reply -->
+                          <form method="post">
+                              <input type="hidden" name="comment.id" value="{{comment.id}}">
+                              <input type="hidden" name="comment.comm_name" value="{{comment.comm_name}}">
+                              {% csrf_token %}
+                              {{form2.as_p}}
+                              <input type="submit" name="form2" value="Add Reply" class="btn btn-warning btn-sm">
+                          </form>
+                      </div>
+                  </div>
+              </div>
+              {% endfor %}
+            </div>
+        </section>
+    </div>
+{% endblock %}

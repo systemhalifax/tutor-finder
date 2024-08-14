@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load ratings %}
+{% load custom_tags %}
+
+{% block content %}
+    <div class="container pb-5">
+        <h2 class="display-7  pt-5 pb-4" style="color:#ff5722;">Book Requests</h2>
+           <!--<div class="border p-4" style="float:right;">
+               <h3 >Our Sidebar</h3>
+               <p class="text-muted">Lorem ipsum dolor sit amet consectetur.</p>
+               <ul class="list-group">
+                   <li class="list-group-item list-group-item-light">Home</li>
+                   <li class="list-group-item list-group-item-light">Announcements</li>
+                   <li class="list-group-item list-group-item-light">Calendars</li>
+                   <li class="list-group-item list-group-item-light">etc</li>
+               </ul>
+           </div>-->
+        {% if bookings and user.id|book_counter %}
+            {% for book in bookings %}
+                {% if book and book.tutor_id.user == user and book.on_session == False  %}
+                        <div class="border card box-shadow-hover mb-3">
+                          <div class="row g-0">
+                            <div class="col-md-2">
+                              <img src="{{ book.student_id.user.image.url }}" class="article-img" alt="{{ book.student_id.user.first_name }}">
+                            </div>
+                            <div class="col-md-7">
+                              <div class="card-body vl">
+                                <h7  class="card-title"><a class="text-dark" href="#" style="text-decoration: none;">{{ book.student_id.user.get_full_name|title }}</a></h7>
+                                <h6 class="text-primary"><a href="#" style="text-decoration: none">Subject to learn: {{ book.subject|capfirst }}</a></h6>
+                                    {% if book.subject|add:book.student_msg|length > 255 %}
+                                    <h7 class="text-muted">{{ book.student_msg|truncatechars:260 }}<a  style="text-decoration: none;">read more</a></h7>
+                                  {% else %}
+                                    <h6 class="text-muted"><a style="text-decoration: none;">{{ book.student_msg|capfirst }}</a></h6>
+                                  {% endif %}
+                                  <form method="POST" action="{% url 'accounts:accept_request' book.id %}">
+                                      {% csrf_token %}
+                                          <button type="submit" class="btn btn-success mt-2">
+                                            Accept
+                                          </button>
+                                        <a type="button" class="btn btn-secondary mt-2" href="{% url 'accounts:deny_request' book.id %}">
+                                            Deny
+                                        </a>
+                                  </form>
+                              </div>
+                            </div>
+                               <div class="col-md-3 text-center pt-3">
+                                   <div class="card-body">
+
+                                    {% ratings book.student_id %}
+
+                                   </div>
+                              </div>
+                          </div>
+                        </div>
+
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <div class="px-4 py-5 my-5 text-center">
+                <h1 class="display-6">You don't have any booking request right now.</h1>
+            </div>
+        {% endif %}
+ <!-- pagination -->
+    {% if is_paginated  %}
+
+        {% if page_obj.has_previous %}
+            <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+        {% endif %}
+
+    {% endif %}
+    </div>
+{% endblock content %}

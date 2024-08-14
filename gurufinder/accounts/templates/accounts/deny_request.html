@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="px-4 py-5 my-5">
+        <div class="col-lg-6 mx-auto">
+          <div class="content-section">
+            <form method="POST">
+              {% csrf_token %}
+              <fieldset class="form-group">
+                <h2 class="display-6  text-center"style="color:#ff5722;" >Are you sure?</h2>
+                {{ form|crispy }}
+                <button class="btn btn-warning mt-4 mb-3" type="submit">Confirm</button>
+                <a class="btn btn-danger mt-4 mb-3" type="button" href="{% url 'accounts:tutor_bookings' %}">Cancel</a>
+              </fieldset>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

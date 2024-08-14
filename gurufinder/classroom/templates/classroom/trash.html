@@ -1,0 +1,74 @@
+          <!--<div class="col-md-12 justify-content-center mb-5">
+              <h4 class="pb-2" style="color:#ff5722;">Time-Table</h4>
+                <table class="table table-bordered" style="width:400px:float:center">
+                  <thead>
+                    <tr>
+                        <th scope="col"> </th>
+                        {% for slot in slots %}
+                          <th scope="col">{{ slot.start_time }}</th>
+                        {% endfor %}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Monday</th>
+                      {%for slot in classrooms.classroom_slots.all%}
+                      {%if slot.day.id == 1 %}
+                      <td>{{slot.slot_subject}}</td>
+                      {% endif %}
+                      {% endfor %}
+                    </tr>
+                    <tr>
+                      <th scope="row">Tuesday</th>
+                      {%for slot in classrooms.classroom_slots.all%}
+                      {%if slot.day.id == 2 %}
+                      <td>{{slot.slot_subject}}</td>
+                      {% endif %}
+                      {% endfor %}
+                    </tr>
+                    <tr>
+                      <th scope="row">Wednesday</th>
+                      {%for slot in classrooms.classroom_slots.all%}
+                      {%if slot.day.id == 3 %}
+                      <td>{{slot.slot_subject}}</td>
+                      {% endif %}
+                      {% endfor %}
+                    </tr>
+                    <tr>
+                      <th scope="row">Thursday</th>
+                      {%for slot in classrooms.classroom_slots.all%}
+                      {%if slot.day.id == 4 %}
+                      <td>{{slot.slot_subject}}</td>
+                      {% endif %}
+                      {% endfor %}
+                    </tr>
+                    <tr>
+                      <th scope="row">Friday</th>
+                      {%for slot in classrooms.classroom_slots.all%}
+                      {%if slot.day.id == 5 %}
+                      <td>{{slot.slot_subject}}</td>
+                      {% endif %}
+                      {% endfor %}
+                    </tr>
+                  </tbody>
+                </table>
+          </div>-->
+          <!-- class row2 for cards -->
+          <!--<div class="row d-flex " style="justify-content: space-around; flex-items: margin-left">
+              {% for subject in classrooms.subjects.all %}
+              <div class="border card box-shadow-hover mb-4 mt-4" style="max-width: 500px;">
+                  <div class="row g-0">
+                      <div class="col-md-2">
+                          <img src="{{subject.image.url|default_if_none:'#'}}" class="article-img" alt="No image found" height="200px" width="200px">
+                      </div>
+                      <div class="col-md-10">
+                          <div class="card-body">
+                              <h4 class="card-title" style="color:#ff5722;">{{subject.name}}</h4>
+                              <p class="card-text">{{subject.description|truncatechars:75}}</p>
+                                    <p class="card-text"><small class="text-muted"></small></p>
+                              <a href="{% url 'classroom:lesson_list' slug=subject.slug classroom=classrooms.slug %}"><button class="button-les"> <span> Get Lessons</span></button></a>
+                          </div>
+                      </div>
+                  </div>
+                  {% endfor %}
+              </div>-->

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="px-4 py-5 my-5">
+        <h1 class="display-6 fw-bold  pb-4 text-center" style="color:#ff5722;">Availability</h1>
+        <div class="col-lg-6 mx-auto">
+          <div class="content-section border p-4">
+            <form method="POST">
+              {% csrf_token %}
+              <fieldset class="form-group">
+                {{ form|crispy }}
+              </fieldset>
+              <div class="form-group">
+                <button class="btn btn-warning mt-4 mb-3" type="submit">save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

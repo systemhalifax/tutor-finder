@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+    <!-- container 1 for classrooms-->
+    <div class="container text-center">
+        <h2 class="mb-5 mt-5 font-weight-bold" style="color:#ff5722;">Dive Into Learning</h2>
+            <!-- class row for description-->
+            <div class="row d-flex justify-content-center mb-4">
+                    <!-- class column -->
+                <div class="col-md-8">
+                    <p class="grey-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quasi voluptate hic provident nulla repellat facere esse molestiae ipsa labore porro minima quam quaerat rem, natus repudiandae debitis est sit pariatur.</p>
+                </div>
+            </div>
+                  <!-- class row2 for cards -->
+            <div class="row">
+                {% for classroom in classrooms %}
+                    <div class="col-md-4 d-flex mb-5 justify-content-center">
+                        <div class="card card-std text-center" style="width: 20rem;">
+                            <div class="card-body text-center">
+                                <h4 class="card-title" style="color:#ff5722;">{{classroom.name}}</h4>
+                                <p class="card-text">{{classroom.description|truncatechars:75}}</p>
+                                {% if user.is_authenticated and user.is_student and classroom.bookings.student_id == user.student_profile %}
+                                    <a href="{% url 'classroom:subject_list' slug=classroom.slug %}" class="btn btn-primary">Enter</a>
+                                {% elif user.is_authenticated and user.is_tutor and classroom.bookings.tutor_id == user.tutor_profile %}
+                                <a href="{% url 'classroom:subject_list' slug=classroom.slug %}" class="btn btn-primary">Enter</a>
+                                {% elif not user.is_authenticated %}
+                                <p>Register or login to start learning</p>
+                                <a href="{% url 'accounts:login' %}" class="btn btn-std" style="background-color:#00bcd4;">Login</a>
+                                <a href="{% url 'accounts:signup' %}" class="btn btn-primary" style="background-color:#00bcd4;">Register</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+    </div>
+
+{% endblock %}

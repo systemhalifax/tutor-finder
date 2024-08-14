@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div role="main" class="container">
+    <div class="row">
+      <div class="my-5">
+        <h2 class="display-5 text-center"  style="color:#ff5722;">
+        Apply Now
+        </h2>
+        <h3 class="display-6 text-center pb-5"> to be listed on gurufinder</h3>
+        <div class="col-lg-6 mx-auto">
+          <div class="content-section border p-4">
+            <form method="POST" enctype="multipart/form-data">
+              {% csrf_token %}
+              <fieldset class="form-group">
+                {{ profile_form|crispy }}
+                {{ application_form|crispy }}
+                <button class="btn btn-warning mt-4 mb-3" type="submit">Submit</button>
+              </fieldset>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

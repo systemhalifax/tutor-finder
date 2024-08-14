@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+  <div class="container center-align pt-5 pb-5" >
+    <h4 class="display-6 fw-bold" style="color:#ff5722;" >Search users</h4>
+    <span>Find users that you can messsage</span>
+
+    <form>
+      <div class="input-field col-lg-12">
+        <input name="q" value="{{ request.GET.q }}" id="search" type="text" class="validate">
+        <label>Search</label>
+      </div>
+        <button class="btn waves-effect waves-light" type="submit" name="action">Search
+          <i class="material-icons right">send</i>
+        </button>
+    </form>
+
+{% for new_user in new_msg_user %}
+      <div class="card mb-3 border border-success col-md-4 d-flex justify-content-center mt-5">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="{{ new_user.image.url }}" class="img-fluid rounded-start" alt="...">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="card-title">{{ new_user.first_name|capfirst }} {{ new_user.last_name|capfirst }}</h5>
+              {% if new_user.is_tutor %}
+              <p class="card-text">{{ new_user.tutor_profile.profile_headline }}</p>
+              {% else %}
+              <p class="card-text">{{ new_user.email }}</p>
+              {% endif %}
+              <a class="btn btn-success" type="button" href="{% url 'direct:newconversation' new_user.username %}" ><small><i class="material-icons right">send</i>Send a message</small></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+    <div class="pb-5"></div>
+  </div>
+{% endblock %}

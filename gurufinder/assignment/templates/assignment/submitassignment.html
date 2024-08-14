@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container pb-5 pt-4">
+  <div class="section">
+      <h4 class="display-6" style="color:#ff5722;">{{ assignment.title }}</h4>
+      <div class="divider"></div>
+  </div>
+
+  <div class="row">
+
+  <div class="col-md-6">
+    <h5>Due:</h5>
+    <p>{{ assignment.due }}</p>
+  </div>
+
+  <div class="col-md-6">
+    <h5>Points:</h5>
+    <p>{{ assignment.points }}</p>
+  </div>
+
+
+  <div class="col-md-12 pb-4 pt-4">
+    {{ assignment.content | safe }}
+  </div>
+
+
+  <div class="col-md-12">
+    <form method="post" action="" enctype="multipart/form-data" role="form" class="col-md-12">
+      {% csrf_token %}
+
+          <div class="file-field input-field col-md-12 pb-4">
+            <div class="btn">
+              <span>File</span>
+              {{ form.file }}
+            </div>
+            <div class="file-path-wrapper">
+              <input class="file-path validate" type="text" placeholder="Upload one file">
+            </div>
+          </div>
+
+            <div class="input-field col-md-12">
+              {{ form.comment }}
+              <label for="Comment">Comment</label>
+            </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <span style="color: red; font-weight: bold;">{{ form.errors }}</span>
+          </div>
+        </div>
+
+
+        <div class="field">
+        <p class="control">
+          <button type="submit" value="login" class="btn waves-effect waves-light">
+            Submit
+          </button>
+        </p>
+      </div>
+
+
+    </form>
+  </div>
+
+
+  </div>
+</div>
+
+
+{% endblock %}

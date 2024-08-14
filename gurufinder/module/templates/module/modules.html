@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container pb-5">
+    <div class="section">
+        <h4 class="display-6" style="color:#ff5722;">{{ subject.name }}</h4>
+        <div class="divider"></div>
+    </div>
+
+    <div class="row g-0">
+
+        <div class="col-lg-3">
+              <ul class="collection with-header">
+                <li class="collection-header"><h4 class="display-6" >Classroom</h4></li>
+                <a href="{% url 'classroom:course' slug=subject.slug  subject_id=subject.id %}" class="collection-item">Home</a>
+                <a href="{% url 'classroom:modules' slug=subject.slug  subject_id=subject.id %}" class="collection-item active">Module</a>
+                <a href="{% url 'classroom:submissions' slug=subject.slug  subject_id=subject.id %}" class="collection-item">Submissions</a>
+                <a href="{% url 'classroom:questions' slug=subject.slug  subject_id=subject.id %}" class="collection-item">Questions</a>
+                  <a href="{% url 'classroom:lesson_list'  slug=subject.slug subject_id=subject.id %}" class="collection-item">Extra Content</a>
+
+
+                  {% if user.is_tutor %}
+                <li class="collection-header"><h4 class="display-6">Teacher</h4></li>
+                <a href="{% url 'classroom:student-submissions' slug=subject.slug  subject_id=subject.id %}" class="collection-item">Student Submissions</a>
+                    {% endif %}
+
+              </ul>
+        </div>
+
+    <div class="col-lg-9 gx-5">
+
+      {% if user.is_tutor %}
+        <a href="{% url 'classroom:new-module' slug=subject.slug  subject_id=subject.id %}" class="btn-floating btn-large waves-effect waves-light red right"><i class="material-icons">add</i></a>
+      {% endif %}
+
+      <div class="section">
+        <h4 class="display-6">Modules</h4>
+        <div class="divider"></div>
+
+        <ul class="collapsible">
+          {% for module in subject.modules.all %}
+          <li>
+            <div class="collapsible-header"><i class="material-icons">expand_more</i><b>{{ module.title }}</b></div>
+            <div class="collapsible-body">
+              {% if user.is_tutor %}
+                <a href="{% url 'classroom:new-page' slug=subject.slug subject_id=subject.id module_id=module.id %}" class="btn-small"><i class="material-icons">add</i>Add new page</a>
+                <a href="{% url 'classroom:new-quiz' slug=subject.slug subject_id=subject.id module_id=module.id %}" class="btn-small"><i class="material-icons">add</i>Add new quiz</a>
+                <a href="{% url 'classroom:new-assignment' slug=subject.slug subject_id=subject.id module_id=module.id %}" class="btn-small"><i class="material-icons">add</i>add new assignment</a>
+              {% endif %}
+                <div class="collection">
+                  <br>
+                  {% for page in module.pages.all %}
+                    <a href="{% url 'classroom:page-detail' slug=subject.slug subject_id=subject.id module_id=module.id page_id=page.id %}" class="collection-item"><i class="material-icons">segment</i> {{ page.title }}
+                     <div class="secondary-content">
+                      Completed:
+                      <i class="material-icons secondary-content">{% if page.id in page_completions %}check_circle{% else %}panorama_fish_eye{% endif %}</i>
+                     </div>
+                    </a>
+                  {% endfor %}
+                  {% for quiz in module.quizzes.all %}
+                    <a href="{% url 'classroom:quiz-detail' slug=subject.slug subject_id=subject.id module_id=module.id quiz_id=quiz.id %}" class="collection-item"><i class="material-icons">fact_check</i> {{ quiz.title }}
+                     <div class="secondary-content">
+                      Completed:
+                      <i class="material-icons secondary-content">{% if quiz.id in quiz_completions %}check_circle{% else %}panorama_fish_eye{% endif %}</i>
+                     </div>
+                    </a>
+                  {% endfor %}
+                  {% for assignment in module.assignments.all %}
+                    <a href="{% url 'classroom:assignment-detail' slug=subject.slug subject_id=subject.id module_id=module.id assignment_id=assignment.id %}" class="collection-item"><i class="material-icons">fact_check</i> {{ assignment.title }}
+                     <div class="secondary-content">
+                      Completed:
+                      <i class="material-icons secondary-content">{% if assignment.id in assignment_completions %}check_circle{% else %}panorama_fish_eye{% endif %}</i>
+                     </div>
+                    </a>
+                  {% endfor %}
+                </div>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+
+      </div>
+
+    </div>
+
+
+    </div>
+</div>
+<div class="pb-5"></div>
+
+{% endblock %}

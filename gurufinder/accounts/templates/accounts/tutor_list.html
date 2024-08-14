@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load ratings %}
+
+{% block content %}
+    <div class="container pb-5">
+            <h1 class="display-6 fw-bold pt-5 pb-4" style="color:#ff5722;">Tutors</h1>
+           <form class="pb-4" action="{% url 'search_language' %}" method="get">
+               {% csrf_token %}
+                <div class="input-group">
+                    <div class="col-3">
+                        <span class="text-muted"><small>Programming Language</small></span>
+                        <input style="max-width:200px" type="text" name="language" class="form-control rounded"  aria-label="Search" aria-describedby="search-addon" />
+                    </div>
+                    <div class="col-3">
+                        <span class="text-muted"><small>Availability</small></span>
+                        <input style="max-width:200px" class="form-control" list="datalistOptions" type="text" name="availability">
+                    </div>
+                     <div class="col- pt-4">
+                         <button type="submit" class="btn btn-primary">Search
+                        <i class="material-icons right">send</i>
+                    </button>
+                     </div>
+                    <datalist id="datalistOptions">
+                      <option value="Monday">
+                      <option value="Tuesday">
+                      <option value="Wednesday">
+                      <option value="Thursday">
+                      <option value="Friday">
+                        <option value="Saturday">
+                      <option value="Sunday">
+                    </datalist>
+                </div>
+            </form>
+          <!-- <div class="border p-4" style="float:right;">
+               <h3>Our Sidebar</h3>
+               <p class="text-muted">Lorem ipsum dolor sit amet consectetur.</p>
+               <ul class="list-group">
+                   <li class="list-group-item list-group-item-light">Home</li>
+                   <li class="list-group-item list-group-item-light">Announcements</li>
+                   <li class="list-group-item list-group-item-light">Calendars</li>
+                   <li class="list-group-item list-group-item-light">etc</li>
+               </ul>
+           </div>-->
+        {% for tutor in tutors %}
+            {% if tutor.user.is_tutor and tutor.is_validated %}
+                <div class="border card box-shadow-hover mb-3">
+                  <div class="row g-0">
+                    <div class="col-md-2">
+                      <img src="{{ tutor.user.image.url }}" class="article-img" alt="{{ tutor.user.first_name }}">
+                    </div>
+                    <div class="col-md-7">
+                      <div class="card-body vl">
+                        <h7  class="card-title"><a class="text-dark" href="{% url 'tutor_detail' tutor.user.id %}" style="text-decoration: none;">{{ tutor.user.first_name|capfirst }} {{ tutor.user.last_name|capfirst }}</a></h7>
+                        <h6 class="text-primary"><a href="{% url 'tutor_detail' tutor.user.id %}" style="text-decoration: none">{{ tutor.profile_headline|capfirst }}</a></h6>
+                          {% if tutor.profile_headline|add:tutor.bio|length > 255 %}
+                            <h7 class="text-muted">{{ tutor.bio|truncatechars:260 }}<a href="{% url 'tutor_detail' tutor.user.id %}" style="text-decoration: none;">read more</a></h7>
+                          {% else %}
+                            <h6 class="text-muted"><a href="{% url 'tutor_detail' tutor.user.id %}" style="text-decoration: none;">{{ tutor.bio|capfirst }}</a></h6>
+                          {% endif %}
+                      </div>
+                    </div>
+                       <div class="col-md-3 text-center pt-3">
+                           <div class="card-body">
+                               <div class="pb-2">₱{{ tutor.hourly_rate }}/<h7><b>hour</b></h7></div>
+
+                            {% ratings tutor %}
+
+                           </div>
+                      </div>
+                  </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+     <!-- pagination -->
+        {% if is_paginated  %}
+
+            {% if page_obj.has_previous %}
+                <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+            {% endif %}
+
+        {% endif %}
+    </div>
+{% endblock content %}

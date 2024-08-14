@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div  class="container pb-5 pt-5">
+    <div class="row">
+      <div class="col-12 col-lg-auto mt-2 border-bottom ">
+                <h1 class="display-6" style="color:#ff5722;">You have been logged out.</h1>
+        <small class="mt-2 text-muted">
+          <a href="{% url 'accounts:login' %}">Log In Again</a>
+        </small>
+    </div>
+  </div>
+  </div>
+{% endblock %}

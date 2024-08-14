@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+        
+{% block content %}
+
+  <div class="container center-align pb-5 pt-5">
+      <div class="col-lg-12">
+
+
+        <form method="post" enctype="multipart/form-data" action="" role="form">
+            {% csrf_token %}
+          <h3 class="display-6" style="color:#ff5722;">Let's create a new module!</h3>
+
+
+                <div class="input-field col-lg-12">
+                  {{ form.title }}
+                  <label for="title">Title</label>
+                </div>
+
+                <div class="input-field col-lg-12">
+                  {{ form.hours }}
+                  <label for="description">Hours</label>
+                </div>
+
+
+            <div class="row">
+              <div class="col-lg-12">
+                <span style="color: red; font-weight: bold;">{{ form.errors }}</span>
+              </div>
+            </div>
+
+
+            <div class="field">
+            <p class="control">
+              <button type="submit" value="login" class="btn waves-effect waves-light">
+                Create new module
+              </button>
+            </p>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  <div/>
+
+{% endblock %}

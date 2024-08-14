@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load ratings %}
+
+{% block content %}
+<div class="container pb-5">
+    <h1 class="display-5 text-center pt-4 pb-4" style="color:#ff5722;">How would you rate {{tutor_name|capfirst}} as a tutor?</h1>
+    {% for tutor_session in tutor_end_session %}
+     <div class="card mb-3 border border-success col-md-6 d-flex justify-content-center mr-5  mt-5 mx-auto" style="max-width: 900px;">
+        <div class="row g-0">
+          <div class="col-md">
+            <img src="{{ tutor_session.user.image.url }}" class="img-fluid rounded-start" alt="...">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="card-title">{{ tutor_session.user.first_name|capfirst }} {{ tutor_session.user.last_name|capfirst }}</h5>
+              <p class="card-text">{{ tutor_session.user.email }}</p>
+                {% ratings tutor_session %}
+                <div></div>
+                <a class="btn btn-success mt-4" type="button" href="{% url 'index' %}" ><small>Done</small></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+</div>
+<div class="pt-5"></div>
+
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container pb-5">
+<div class="section">
+	<h4 class="display-6" style="color:#ff5722;">{{ subject.name }}</h4>
+	<div class="divider"></div>
+</div>
+
+<div class="row g-0">
+
+<div class="col-md-3">
+      <ul class="collection with-header">
+                <li class="collection-header"><h4 class="display-6">Classroom</h4></li>
+                <a href="{% url 'classroom:course' slug=subject.slug  subject_id=subject.id %}" class="collection-item">Home</a>
+                <a href="{% url 'classroom:modules' slug=subject.slug  subject_id=subject.id %}" class="collection-item">Module</a>
+                <a href="{% url 'classroom:submissions' slug=subject.slug  subject_id=subject.id %}" class="collection-item">Submissions</a>
+                <a href="{% url 'classroom:questions' slug=subject.slug  subject_id=subject.id %}" class="collection-item active">Questions</a>
+              <a href="{% url 'classroom:lesson_list'  slug=subject.slug subject_id=subject.id %}" class="collection-item">Extra Content</a>
+
+                  {% if user.is_tutor %}
+                <li class="collection-header"><h4 class="display-6">Teacher</h4></li>
+                <a href="{% url 'classroom:student-submissions' slug=subject.slug  subject_id=subject.id %}" class="collection-item">Student Submissions</a>
+                    {% endif %}
+
+              </ul>
+</div>
+
+<div class="col-md-9 gx-5">
+
+  <a href="{% url 'classroom:new-student-question' slug=subject.slug subject_id=subject.id %}" class="btn-floating btn-large waves-effect waves-light red right"><i class="material-icons">add</i></a>
+
+  <div class="section">
+    <h4 class="display-6">Questions</h4>
+    <div class="divider"></div>
+
+
+    {% for question in questions %}
+   <div class="border card box-shadow-hover mb-3">
+          <div class="row g-0">
+              <div class="col-md-2">
+                  <img src="{{ question.user.image.url }}" class="article-img" alt="{{ question.user.first_name }}">
+              </div>
+              <div class="col-md-7">
+                  <div class="card-body vl">
+                      <h7><a class="text-dark">{{ question.user.get_full_name|title }}@{{ question.user.email }}</a></small>
+                      <h6 class="text-primary"><a href="{% url 'classroom:question-detail' slug=subject.slug subject_id=subject.id question_id=question.id %}" style="text-decoration: none">{{ question.title|capfirst }}</a></h6>
+                      {% if question.title|add:question.body|length > 150 %}
+                        <h7 class="text-muted">{{ question.body|truncatechars:110 }}<a href="{% url 'classroom:question-detail' slug=subject.slug subject_id=subject.id question_id=question.id %}" style="text-decoration: none;">read more</a></h7>
+                      {% else %}
+                        <h6 class="text-muted"><a href="{% url 'classroom:question-detail' slug=subject.slug subject_id=subject.id question_id=question.id %}" style="text-decoration: none;">{{ question.bio|capfirst }}</a></h6>
+                      {% endif %}
+                  </div>
+              </div>
+              <div class="secondary-content col-md-3 text-center pt-3">
+                  <h5>{{ question.get_answers_count }} Answers</h5>
+                  <h5>
+                      {% if question.has_accepted_answer == True %}
+                        <span class="new badge green" data-badge-caption="Answered"></span>
+                      {% else %}
+                        <span class="new badge orange" data-badge-caption="Unanswered"></span>
+                      {% endif %}
+
+                  </h5>
+              </div>
+          </div>
+      </div>
+    {% endfor %}
+
+
+    <div class="col-md-12 m12 center-align">
+      {% if questions.has_previous %}
+        <a href="?page={{ questions.previous_page_number }}" class="btn"><i class="material-icons">arrow_back</i>Back</a>
+      {% endif %}
+
+      {% if questions.has_next %}
+        <a href="?page={{ questions.next_page_number }}" class="btn"><i class="material-icons">add</i>Load more</a>
+      {% endif %}  
+
+    </div>
+  
+
+
+  </div>
+  
+</div>
+
+
+</div>
+</div>
+
+{% endblock %}

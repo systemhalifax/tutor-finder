@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div role="main" class="container pb-5">
+        <div main="row">
+            <div class="content-section mt-5">
+                 <div class="px-4 py-5 my-5 text-center">
+                    <h1 class="display-5 fw-bold" style="color:#ff5722;">Sign up for a free account</h1>
+                    <div class="col-lg-6 mx-auto">
+                      <p class="lead mb-4">Select below the type of account you want to create</p>
+                      <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                        <a href="{% url 'accounts:student_signup' %}" class="btn btn-warning btn-lg px-4 gap-3" role="button">I'm a student</a>
+                        <a href="{% url 'accounts:tutor_signup' %}" class="btn btn-warning btn-lg px-4 gap-3" role="button">I'm a tutor</a>
+                      </div>
+                    </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+<div class="pb-5"></div>
+{% endblock %}

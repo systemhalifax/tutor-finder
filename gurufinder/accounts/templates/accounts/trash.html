@@ -1,0 +1,312 @@
+<!-- tutor booked request -->
+{% extends 'base.html' %}
+{% load static %}
+{% load ratings %}
+{% load custom_tags %}
+
+{% block content %}
+    <div class="container pb-5">
+        <h2 class="display-7  pt-5 pb-4" style="color:#ff5722;">Book Requests</h2>
+           <!--<div class="border p-4" style="float:right;">
+               <h3 >Our Sidebar</h3>
+               <p class="text-muted">Lorem ipsum dolor sit amet consectetur.</p>
+               <ul class="list-group">
+                   <li class="list-group-item list-group-item-light">Home</li>
+                   <li class="list-group-item list-group-item-light">Announcements</li>
+                   <li class="list-group-item list-group-item-light">Calendars</li>
+                   <li class="list-group-item list-group-item-light">etc</li>
+               </ul>
+           </div>-->
+        {% if bookings and user.id|book_counter %}
+            {% for book in bookings %}
+                {% if book and book.tutor_id.user == user and book.on_session == False  %}
+                    <div class="border card box-shadow-hover mb-3" style="max-width: 750px; border-radius">
+                      <div class="row g-0">
+                        <div class="col-md-2">
+                          <img src="{{ book.student_id.user.image.url }}" class="article-img" alt="{{ book.student_id.user.first_name }}">
+                        </div>
+                        <div class="col-md-10">
+                          <div class="card-body">
+                            <h5 class="card-title"><a class="text-dark" href="#" style="text-decoration: none;">Name: {{ book.student_id.user.first_name|capfirst }} {{ book.student_id.user.last_name|capfirst }}</a></h5>
+                            <h5 class="text-primary"><a class="text-primary" href="#" style="text-decoration: none">Subject: {{ book.subject|capfirst }}</a></h5>
+                              {% if book.subject|add:book.student_msg|length > 255 %}
+                                <h6 class="text-muted">{{ book.student_msg|truncatechars:260 }}<a class="text-primary" href="#" style="text-decoration: none;">read more</a></h6>
+                              {% else %}
+                                <h6 class="text-muted mb-3"><a class="text-muted" href="#" style="text-decoration: none;">{{ book.student_msg|capfirst }}</a></h6>
+                              {% endif %}
+                                {% ratings book.student_id %}
+                              <div class="mt-2">
+                                  <form method="POST" action="{% url 'accounts:accept_request' book.id %}">
+                                      {% csrf_token %}
+                                          <button type="submit" class="btn btn-success mt-2">
+                                            Accept
+                                          </button>
+                                        <a type="button" class="btn btn-secondary mt-2" href="{% url 'accounts:deny_request' book.id %}">
+                                            Deny
+                                        </a>
+                                  </form>
+                              </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <div class="px-4 py-5 my-5 text-center">
+                <h1 class="display-6">You don't have any booking request right now.</h1>
+            </div>
+        {% endif %}
+ <!-- pagination -->
+    {% if is_paginated  %}
+
+        {% if page_obj.has_previous %}
+            <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+        {% endif %}
+
+    {% endif %}
+    </div>
+{% endblock content %}
+
+
+
+<!--old edit profile>
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+            <div>
+               <h1 class="display-6 fw-bold text-center pt-5" style="color:#ff5722;">Edit Profile</h1>
+           </div>
+	   <div class="container mt-4 pb-5" style="float:right">
+	<div class="row gutters">
+	<div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+	<div class="card h-100">
+		<div class="card-body">
+			<div class="account-settings">
+				<div class="user-profile">
+					<div class="user-avatar">
+						<img src="{{ user.image.url }}" alt="{{ user.first_name }}">
+					</div>
+					<h5 class="user-name">{{ user.first_name|capfirst }} {{ user.last_name|capfirst }}</h5>
+					<h6 class="user-email">{{ user.email }}</h6>
+				</div>
+				{% if user.is_tutor %}
+                    <div class="about">
+                        <h5>Profile Headline</h5>
+                        <h6><p>{{ user.tutor_profile.profile_headline }}</p></h6>
+                        <p></p>
+                    </div>
+                {% endif %}
+			</div>
+		</div>
+	</div>
+	</div>
+	<div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">First Name</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <input type="text" class="form-control" name="first_name" maxlength="100" {% if form.is_bound %} value="{{ form.first_name.value }}" {% endif %} placeholder="{{ user.first_name }}">
+                                {% for error in form.first_name.errors %}
+                                    <small class="text-danger ml-2">{{ error }}</small><br>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Last Name</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <input type="text" class="form-control" name="last_name" maxlength="100" {% if form.is_bound %} value="{{ form.last_name.value }}" {% endif %} placeholder="{{ user.last_name }}">
+                                {% for error in form.last_name.errors %}
+                                    <small class="text-danger ml-2">{{ error }}</small><br>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Email</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <input type="email" class="form-control" name="email" {% if form.is_boud %} value="{{ form.email.value }}" {% endif %} placeholder="{{ user.email }}">
+                                {% for error in form.email.errors %}
+                                    <small class="text-danger ml-2">{{ error }}</small><br>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Phone</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <input type="text" class="form-control" name="phone_number" maxlength="11" {% if form.is_bound %} value="{{ form.phone_number.value }}" {% endif %} placeholder="{{ user.phone_number }}">
+                                {% for error in form.phone_number.errors %}
+                                    <small class="text-danger ml-2">{{ error }}</small><br>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Address</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <input type="text" class="form-control" name="current_address" maxlength="100" {% if form.is_bound %} value="{{ form.current_address.value }}" {% endif %} placeholder="{{ user.current_address }}">
+                                {% for error in form.current_address.errors %}
+                                    <small class="text-danger ml-2">{{ error }}</small><br>
+                                {% endfor %}
+                            </div>
+                        </div>
+                         <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6>Image</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                {{ form.image.label_tag }}
+                                {{ form.image }}
+                                {% for error in form.image.errors %}
+                                    <small class="text-danger ml-2">{{ error }}</small><br>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-9 text-secondary">
+                                <input type="submit" class="btn btn-warning px-4" value="Save Changes">
+                                <a href="{% url 'accounts:profile' %}" class="btn btn-danger px-4 mx-2">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </form>
+	</div>
+	</div>
+	</div>
+<!--prevent footer from overflowing -->
+<div>
+</div>
+{% endblock %}
+
+<!-- old profile >
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+             <div>
+               <h1 class="display-6 fw-bold text-center pt-5" style="color:#ff5722;">My Profile</h1>
+           </div>
+	   <div class="container mt-4 pb-5" style="float:right">
+            <div class="row gutters" >
+            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+            <div class="card h-100">
+                <div class="card-body" >
+                    <div class="account-settings">
+                        <div class="user-profile">
+                            <div class="user-avatar pt-4">
+                                <img src="{{ user.image.url }}" alt="{{ user.first_name }}">
+                            </div>
+                            <h5 class="user-name">{{ user.first_name|capfirst }} {{ user.last_name|capfirst }}</h5>
+                            <h6 class="user-email">{{ user.email }}</h6>
+                        </div>
+                        {% if user.is_tutor %}
+                            <div class="about">
+                                <h5>Profile Headline</h5>
+                                <h6><p>{{ user.tutor_profile.profile_headline }}</p></h6>
+                                <p></p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+                 <div class="col-md-8">
+                      <div class="card mb-3">
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">First Name</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                              {{ user.first_name }}
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Last Name</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                              {{ user.last_name }}
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Email</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                              {{ user.email }}
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Phone</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                              {{ user.phone_number }}
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Address</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                {{ user.current_address }}
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-12">
+                                <!-- Default switch -->
+                                <div class="form-check form-switch">
+                                  <input class="form-check-input" type="checkbox" id="profile_visible" name="profile visibility" onclick="cal();" />
+                                  <label class="form-check-label" for="profile_visible">Profile Visibility</label>
+                                </div>
+                                <a class="btn btn-warning mt-4  "  href="{% url 'accounts:profile_update' user.username %}">Edit</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                 </div>
+            </div>
+            </div>
+	</div>
+<!--prevent footer from overflowing -->
+  <div>
+  </div>
+{% endblock %}

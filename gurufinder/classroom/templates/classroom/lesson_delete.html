@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+    <div class="container">
+        <section id="best-features" class="text-center">
+            <h2 class=" display-5 my-5 font-weight-bold"  style="color:#ff5722;">Delete {{lessons.name}}</h2>
+            <!-- class row for description-->
+            <div class="row d-flex justify-content-center mb-4">
+                <!-- class column -->
+                <div class="col-md-8">
+                    <p class="grey-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quasi voluptate hic provident nulla repellat facere esse molestiae ipsa labore porro minima quam quaerat rem, natus repudiandae debitis est sit pariatur.</p>
+                </div>
+            </div>
+        </section>
+
+      <div class="px-4 text-center border-bottom">
+        <h3 class="display-6">Are you sure you want to delete {{lessons.name}} chapter?</h3>
+          <form method="post">
+              {% csrf_token %}
+            <div class="col-lg-6 mx-auto">
+              <div class="d-grid gap-2 d-sm-flex justify-content-sm-center my-5">
+                <input type="submit" value="Delete" role="button" class="btn btn-danger btn-lg px-4 me-sm-3">
+                <a href="{% url 'classroom:lesson_detail' classroom=lessons.Classroom.slug subject=lessons.subject.slug slug=lessons.slug %}" type="button" class="btn btn-warning btn-lg px-4">Cancel</a>
+              </div>
+            </div>
+          </form>
+      </div>
+    </div>
+{% endblock %}

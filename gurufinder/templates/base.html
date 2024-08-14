@@ -1,0 +1,191 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- star ratings css -->
+    <link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css" integrity="sha256-2XFplPlrFClt0bIdPgpz8H7ojnk10H69xRqd9+uTShA=" crossorigin="anonymous" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet"
+    <!-- tutor list css -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+
+
+    <!-- to connect a css -->
+    <!--<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/master.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/featurette.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/tutor_list.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/tutor_detail.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/chatbox.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/search_bar.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/our_team.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/aboutus.css' %}">
+
+
+      <!-- CSS  -->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <link href="{% static 'css/materialize.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+      <link href="{% static 'css/style.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+
+    <title>{%block title%}{%endblock%}</title>
+
+
+</head>
+<body>
+    <header class="py-3 bg-dark text-white shadow">
+        <div class="container">
+          <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+
+            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                <a class="navbar-brand"  href="{% url 'index' %}"><h5 style="line-height:80%;"><span class="multicolortext">𝓖𝓾𝓻𝓾𝓯𝓲𝓷𝓭𝓮𝓻</span></h5></a>
+              <li><a href="{% url 'index' %}" class="nav-link mt-3 px-2 text-white">Home</a></li>
+<!--                <li><a href="{% url 'how_it_works' %}" class="nav-link mt-3 px-2 text-white">How it Works</a></li>-->
+                {% if user.is_student %}
+                    <li><a href="{% url 'tutor_list' %}" class="nav-link mt-3  px-2 text-white">Search For Tutors</a></li>
+                    <!--<li><a href="#" class="nav-link px-2 text-white">Request A Tutor</a></li>-->
+                {% elif user.is_tutor and user.tutor_profile.is_validated == False %}
+                    <li><a href="{% url 'application' %}" class="nav-link mt-3 px-2 text-white">Start Tutoring</a></li>
+                <!--comment out -->
+                {# {% elif user.is_tutor and user.tutor_profile.is_validated or user.is_superuser %} #}
+                    <!--<li><a href="#" class="nav-link px-2 text-white">Book A Lesson</a></li>-->
+                {% endif %}
+              <li><a href="{% url 'about' %}" class="nav-link mt-3 px-2 text-white">About Us</a></li>
+            </ul>
+
+            <div class="text-end">
+                {% if user.is_authenticated and user.is_student or user.is_superuser%}
+                    <div class="dropdown text-end">
+                      <a href="#" class="d-block link-light text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{{ user.image.url }}" alt="{{ user.username }}" width="32" height="32" class="rounded-circle">
+
+                      </a>
+                      <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
+                        <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">My Profile</a></li>
+                          <li><a class="dropdown-item" href="{% url 'accounts:booked_sessions' %}">My Sessions</a></li>
+                          <!--<li><a class="dropdown-item" href="{% url 'classroom:classroom_list' %}">Courses</a></li>-->
+                          <li><a class="dropdown-item" href="{% url 'accounts:student_wallet' %}">My Wallet</a></li>
+                          {% if directs_count %}
+                          <li><a class="dropdown-item" href="{% url 'direct:inbox' %}">Messages <span class="badge bg-secondary">New</span></a></li>
+                          {% else %}
+                          <li><a class="dropdown-item" href="{% url 'direct:inbox' %}">Messages</a></li>
+                          {% endif %}
+                        <!-- <li><a class="dropdown-item" href="#">View/Edit Profile</a></li> -->
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a></li>
+                      </ul>
+                    </div>
+                {% elif user.is_authenticated and user.is_tutor %}
+                    <div class="dropdown text-end">
+                      <a href="#" class="d-block link-light text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{{ user.image.url }}" alt="{{ user.username }}" width="32" height="32" class="rounded-circle">
+
+                      </a>
+                      <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
+                        <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">My Profile</a></li>
+                          {% if user.tutor_profile.is_validated %}
+                          <li><a class="dropdown-item" href="{% url 'accounts:booked_sessions' %}">My Sessions</a></li>
+                          <li><a class="dropdown-item" href="{% url 'accounts:tutor_wallet' %}">My Wallet</a></li>
+                          <li><a class="dropdown-item" href="{% url 'accounts:tutor_bookings' %}">Book Requests</a></li>
+                          <!--<li><a class="dropdown-item" href="{% url 'classroom:classroom_list' %}">Courses</a></li>-->
+                          {% elif user.is_superuser %}
+                            <li><a class="dropdown-item" href="{% url 'classroom:classroom_list' %}">Courses</a></li>
+                            <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin</a></li>
+                          {% endif %}
+                        <li><a class="dropdown-item" href="{% url 'direct:inbox' %}">Messages</a></li>
+                          {% if user.tutor_profile.is_validated %}
+                        <li><a class="dropdown-item" href="{% url 'accounts:availability' %}">Availability</a></li>
+                          {% endif %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a></li>
+                      </ul>
+                    </div>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}"class="btn btn-outline-light me-2" role="button">Login</a>
+                    <a href="{% url 'accounts:signup' %}"class="btn btn-warning" role="button">Sign-up</a>
+                {% endif %}
+            </div>
+          </div>
+        </div>
+  </header>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="container">
+                <div class="row">
+                    <div class="text-center my-3">
+                    <!--<div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0 mt-2">-->
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+
+    <!-- FOOTER -->
+    <footer class="w-100 py-4 flex-shrink-0">
+        <div class="container py-4">
+            <div class="row gy-4 gx-5">
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="h1 text-white">GuruFinder</h5>
+                    <p class="small text-muted">Find the right tutor for you</p>
+                    <p class="small text-muted mb-0">&copy; Copyrights. All rights reserved. <a class="text-primary" href="#">gurufinder.com</a></p>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="text-white mb-3">Quick links</h5>
+                    <ul class="list-unstyled text-muted">
+                        <li><a href="{% url 'index' %}">Home</a></li>
+                        <li><a href="{% url 'about' %}">About</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="text-white mb-3">Quick links</h5>
+                    <ul class="list-unstyled text-muted">
+                        <li><a href="{% url 'index' %}">Home</a></li>
+                        <li><a href="{% url 'about' %}">About</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="text-white mb-3">Let's talk</h5>
+                    <p class="small text-muted">EMAIL: princess.fev-14@cpu.edu.ph</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <!--  Scripts-->
+      <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="{% static 'js/materialize.js' %}"></script>
+      <script src="{% static 'js/init.js' %}"></script>
+      <script type="text/javascript" src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+      <script type="text/javascript" src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+
+    <!-- star ratings script -->
+    <script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
+    <!-- htmx -->
+    <script src="https://unpkg.com/htmx.org@1.1.0"></script>
+    <script>
+      document.body.addEventListener('htmx:configRequest', (event) => {
+        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+      })
+    </script>
+
+
+
+</body>
+</html>

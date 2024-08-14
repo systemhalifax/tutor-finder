@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+    <div class="container pb-5">
+      <section id="best-features" class="text-center">
+          <h2 class="mb-5 mt-5 font-weight-bold" style="color:#ff5722;">Master The Subject</h2>
+                    <!-- class row for description-->
+          <div class="row d-flex justify-content-center mb-4">
+                      <!-- class column -->
+              <div class="col-md-8 mb-5">
+                  <p class="grey-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quasi voluptate hic provident nulla repellat facere esse molestiae ipsa labore porro minima quam quaerat rem, natus repudiandae debitis est sit pariatur.</p>
+              </div>
+          </div>
+                {% for subject in classrooms.subjects.all %}
+                      <div class="card card-std my-4 py-3 shadow-sm">
+                    <!-- Basic Plan -->
+                    <div class="row align-items-center">
+                      <div class="col-12 col-md-4">
+                     <img src="{{subject.image.url|default_if_none:'#'}}" class="article-img" alt="No image found" height="200px" width="200px">
+
+                      </div>
+
+                      <ul class="list-unstyled mb-0 col-12 col-md-4 text-dark-l1 text-90 text-left my-4 my-md-0">
+                          <h4 class="= text-170 text-600 text-primary-d1 letter-spacing">
+                          {{subject.name}}
+                        </h4>
+                          <span class="mt-25 text-110">
+                            {{subject.description|truncatechars:75}}
+                        </span>
+                      </ul>
+
+                      <div class="col-12 col-md-4 text-center">
+                          <a href="{% url 'classroom:course' slug=subject.slug  subject_id=subject.id %}"><button class="button-les"> <span> Get Lessons</span></button></a>
+<!--                                                    <a href="#"><button class="button-les"> <span> Get Lessons</span></button></a>-->
+
+                          </div>
+                    </div>
+
+                  </div>
+              {% endfor %}
+          </div>
+      </section>
+    </div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2 class="display-5 text-center pt-5 "  style="color:#ff5722;">
+        Student Wallet
+    </h2>
+    <h3 class="display-6 text-center pb-5"> FOR {{ student.user.first_name|upper }}</h3>
+<div class="container pb-5">
+<em> <br> <br>Welcome {{ student.user.first_name|capfirst }}! Your Account Balance is PHP {{ student.wallet }} </em>
+    <br>
+<br>
+<form action="{% url 'accounts:student_wallet' %}" method="POST">
+  {% csrf_token %}
+    <div class="input-group mb-3">
+       <input placeholder="Add Amount (PHP)" class="form-control"  type="number" name='amount' step="0.10" min=1 style="max-width:200px">
+        <button class="btn btn-secondary btn-sm" type="submit" >Add</button>
+    </div>
+</form>
+<br>
+
+{% if transactions %}
+<em> Your Transactions for the past 30 days are: </em>
+<br>
+<br>
+
+<table class="table">
+  <thead>
+    <tr class="table-dark">
+      <th scope="col"> Transaction Time</th>
+      <th scope="col"> Debit</th>
+      <th scope="col"> Credit</th>
+      <th scope="col"> Details</th>
+    </tr>
+  </thead>
+     <tbody>
+     {% for transaction in transactions %}
+        <tr class="table-secondary">
+          <th scope="row"> {{ transaction.transaction_time }} </th>
+          <td> {{ transaction.added_amount }} </td>
+          <td> {{ transaction.subtracted_amount }} </td>
+          <td> {{ transaction.details }} </td>
+        </tr>
+     {% endfor %}
+     </tbody>
+</table>
+
+
+<br>
+{% endif %}
+</div>
+
+{% endblock %}

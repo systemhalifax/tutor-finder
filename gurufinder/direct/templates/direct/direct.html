@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+<div class="container" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<h3 class="text-center pt-5 pb-4" style="color:#ff5722;">Messages</h3>
+<div class="messaging">
+      <div class="inbox_msg">
+        <div class="inbox_people">
+          <div class="headind_srch">
+            <div class="recent_heading">
+              <h4>Recent</h4>
+            </div>
+            <div class="srch_bar">
+              <a type="button" class="btn btn-success" href="{% url 'direct:usersearch' %}">New Message</a>
+            </div>
+          </div>
+          <div class="inbox_chat">
+            {% for message in msg %}
+            <a href="{% url 'direct:message' message.user.username %}">
+              <div class="chat_list {% if active_direct == message.user.username %}active_chat{% endif %}">
+                <div class="chat_people">
+                  <div class="chat_img"> <img src="{{ message.user.image.url }}" alt="{{ message.user.first_name }}"> </div>
+                  <div class="chat_ib">
+                    <h5>{{ message.user.first_name|capfirst }} {{ message.user.last_name|capfirst }} <span class="chat_date">{{ message.last|date:"M d" }}</span></h5>
+                      <p>{{ message.user.email }}</p>
+                    {% if message.unread %}
+                    <span class="badge bg-secondary">New</span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="mesgs">
+          <div class="msg_history">
+            {% for direct in directs %}
+            {% if direct.sender == direct.recipient %}
+             <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="{{ direct.sender.image.url }}" alt="{{ direct.sender.first_name }}"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>{{ direct.body }}</p>
+                  <span class="time_date">{{ direct.date|date:"h:i A  |  M d" }}</span></div>
+              </div>
+            </div>
+            {% elif direct.sender == direct.sender %}
+            <div class="outgoing_msg">
+              <div class="sent_msg">
+                <p>{{ direct.body }}</p>
+                <span class="time_date">{{ direct.date|date:"h:i A  |  M d" }}</span> </div>
+             </div>
+            {% endif %}
+            {% endfor %}
+          </div>
+          <form role="form" method="POST" action="{% url 'direct:send_direct' %}">
+            {% csrf_token %}
+            <div class="type_msg">
+              <div class="input_msg_write">
+                <input type="hidden" name="to_user" value="{{ active_direct }}">
+                <input type="text" class="write_msg" name="body" placeholder="Type a message" />
+                <button class="msg_send_btn" type="submit"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div></div>
+{% endblock %}

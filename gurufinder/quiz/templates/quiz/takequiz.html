@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container pb-5 pt-4">
+  <div class="section">
+      <h4 class="display-6" style="color:#ff5722;">{{ quiz.title }}</h4>
+      <div class="divider"></div>
+  </div>
+
+  <div class="row">
+
+  <div class="col-md-4">
+    <h5>Due:</h5>
+    <p>{{ quiz.due }}</p>
+  </div>
+
+  <div class="col-md-4">
+    <h5>Allowed Attempts:</h5>
+    <p>{{ quiz.allowed_attempts }}</p>
+  </div>
+
+  <div class="col-md-4">
+    <h5>Time limit:</h5>
+    <p>{{ quiz.time_limit_mins }}</p>
+  </div>
+
+  <div class="col-md-12 pb-4 pt-4">
+    {{ quiz.description | safe }}
+  </div>
+
+
+  <div class="col-md-12">
+    <form method="post" action="{% url 'classroom:submit-quiz' slug=subject.slug subject_id=subject.id module_id=module_id quiz_id=quiz.id %}" role="form" class="col s12">
+      {% csrf_token %}
+      {% for question in quiz.questions.all %}
+        <div class="col-md-12">
+          <br>
+          <p>{{ question.question_text }}</p>
+          <input type="hidden" name="question" value="{{ question.id }}">
+        </div>
+        {% for answer in question.answers.all %}
+          <div class="input col-md-12">
+            <label>
+              <input name="answer" type="checkbox" value="{{ answer.id }}" style="opacity:0%"/>
+              <span>{{ answer.answer_text }}</span>
+            </label>
+          </div>
+        {% endfor %}
+      {% endfor %}
+      <div class="col-md-12 pt-5">
+          <button type="submit" value="login" class="btn waves-effect waves-light">
+            Submit
+          </button>
+      </div>
+    </form>
+  </div>
+
+
+  </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container pb-5 pt-4">
+  <div class="section">
+      <h4 class="display-6" style="color:#ff5722;">{{ assignment.title }}</h4>
+      <div class="divider"></div>
+  </div>
+
+  <div class="row">
+
+  <div class="col-md-6">
+    <h5>Due:</h5>
+    <p>{{ assignment.due }}</p>
+  </div>
+
+  <div class="col-md-6">
+    <h5>Points:</h5>
+    <p>{{ assignment.points }}</p>
+  </div>
+
+
+  <div class="col-md-12 pb-4 pt-4">
+    {{ assignment.content | safe }}
+  </div>
+
+
+  <div class="col-md-12">
+    <ul class="collection with-header">
+      <li class="collection-header"><h4>Files in this assignment</h4></li>
+      {% for file in assignment.files.all %}
+        <li class="collection-item"><div>{{ file.get_file_name }}<a class="secondary-content" href="{{ file.file.url }}" download>
+          <i class="material-icons">download</i></a></div>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+
+  <div class="col-md-12">
+    <ul class="collection with-header">
+      <li class="collection-header pt-4 pb-4"><h4>My attempts</h4></li>
+      {% for submission in my_submissions %}
+          <li class="collection-item avatar">
+            <i class="material-icons circle">insert_chart</i>
+            <span class="title"><b>{{ submission.user.get_full_name|title }}</b></span>
+            <p>"{{ submission.comment }}"</p>
+            <p>Submited on: {{ submission.date }}</p>
+            <a href="#!" class="secondary-content"><i class="material-icons">delete</i></a>
+          </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+
+      <div class="col-md-12 pt-4">
+        <a class="btn" href="{% url 'classroom:start-assignment' slug=subject.slug subject_id=subject.id module_id=module_id assignment_id=assignment.id %}">Start Assignment</a>
+      </div>
+
+
+  </div>
+</div>
+
+
+{% endblock %}

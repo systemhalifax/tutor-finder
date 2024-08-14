@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load ratings %}
+{% load custom_tags %}
+
+{% block content %}
+    <div class="container pb-5">
+        <div class="pt-5 pb-5 text-center">
+            <h1 class="display-5 fw-bold" style="color:#ff5722;">Your Booked Sessions</h1>
+        </div>
+        {% if user.is_tutor and user.tutor_profile.has_bookings %}
+            <table class="table">
+                <thead>
+                    <tr class="table-dark">
+                        <th scope="col">#</th>
+                        <th scope="col">Student Name</th>
+                        <th scope="col">Started in</th>
+                        <th scope="col">Ends on</th>
+                        <th scope="col">Classroom</th>
+                        <th scope="col">Session</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for session in active_sessions %}
+                        {% for room in rooms %}
+                            {% if room.bookings == session and session.tutor_id.user == user %}
+                                <tr class="table-info">
+                                    <th scope="row">{{ forloop.parentloop.counter }}</th>
+                                    <td>{{ session.student_id.user.get_full_name|title }}</td>
+                                    <td>{{ session.start_time }}</td>
+                                    <td>{{ session.end_time }}</td>
+                                    <td><a href="{% url 'classroom:subject_list' slug=room.slug %}">{{ room.name }}</a></td>
+                                    <td><a class="text-danger" href="{% url 'accounts:end_session' session.id %}" type="button">Cancel</a></td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% elif user.is_student and user.student_profile.has_bookings %}
+             <table class="table">
+                <thead>
+                    <tr class="table-dark">
+                        <th scope="col">#</th>
+                        <th scope="col">Tutor Name</th>
+                        <th scope="col">Started in</th>
+                        <th scope="col">Ends on</th>
+                        <th scope="col">Classroom</th>
+                        <th scope="col">Session</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for session in active_sessions %}
+                        {% for room in rooms %}
+                            {% if room.bookings == session and session.student_id.user == user %}
+                                <tr class="table-info">
+                                    <th scope="row">{{ forloop.parentloop.counter }}</th>
+                                    <td>{{ session.tutor_id.user.get_full_name|title }}</td>
+                                    <td>{{ session.start_time }}</td>
+                                    <td>{{ session.end_time }}</td>
+                                    <td><a href="{% url 'classroom:subject_list' slug=room.slug %}">{{ room.name }}</a></td>
+                                    <td><a class="text-danger" href="{% url 'accounts:end_session' session.id %}" type="button">Cancel</a></td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="px-4 py-5 my-5 text-center">
+                <h1 class="display-6">You have no sessions booked currently!</h1>
+            </div>
+        {% endif %}
+    </div>
+<div class="pb-5"></div>
+<div class="pb-5"></div>
+
+<div class="pb-5"></div>
+
+{% endblock content %}
